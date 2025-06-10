@@ -7,11 +7,17 @@ PROXY_URL="https://scoop.201704.xyz/"
 # 请指定用户名
 USER_NAME=code
 
+OS_VER="$(lsb_release -sr)"
+
 # 切换时区东八区
 timedatectl set-timezone Asia/Shanghai
 
 # 更新中科大的源
-sed -E -i -e 's/(archive|ports).ubuntu.com/mirrors.ustc.edu.cn/g' -e '/security.ubuntu.com/d' /etc/apt/sources.list
+if [ "$OS_VER" = "24.04" ]; then
+	sed -E -i -e 's/(archive|security).ubuntu.com/mirrors.ustc.edu.cn/g' /etc/apt/sources.list.d/ubuntu.sources
+else
+	sed -E -i -e 's/(archive|ports).ubuntu.com/mirrors.ustc.edu.cn/g' -e '/security.ubuntu.com/d' /etc/apt/sources.list
+fi
 
 # 更新apt
 apt-get update
@@ -22,9 +28,8 @@ apt-get install -y software-properties-common apt-utils build-essential gcc-12 g
 apt-get install -y flex bison
 apt-get install -y gdb lldb gdbserver gdb-multiarch
 apt-get install -y openjdk-17-jdk dotnet-sdk-6.0
-apt-get install -y gcc-mips-linux-gnu g++-mips-linux-gnu
-apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
-apt-get install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf
+# apt-get install -y gcc-mips-linux-gnu g++-mips-linux-gnu
+apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf
 apt-get install -y gcc-riscv64-linux-gnu g++-riscv64-linux-gnu
 apt-get install -y qemu-user-static
 apt-get install -y doxygen texlive-lang-chinese texlive-lang-english texlive-latex-extra texlive-science texlive-plain-generic
@@ -34,14 +39,14 @@ apt-get install -y openssh-server
 if [ -f /usr/local/bin/antlr-4.12.0-complete.jar ]; then
 	echo "antlr-4.12.0-complete.jar exists, skipping"
 else
-	wget -O /usr/local/bin/antlr-4.12.0-complete.jar ${PROXY_URL}https://github.com/antlr/website-antlr4/blob/gh-pages/download/antlr-4.12.0-complete.jar
+	wget -O /usr/local/bin/antlr-4.12.0-complete.jar ${PROXY_URL}https://github.com/antlr/website-antlr4/raw/refs/heads/gh-pages/download/antlr-4.12.0-complete.jar
 	chmod +x /usr/local/bin/antlr-4.12.0-complete.jar
 fi
 
 if [ -f /usr/local/lib/libantlr4-runtime.so.4.12.0 ]; then
 	echo "antlr4-cpp-runtime-4.12.0 exists, skipping"
 else
-	wget -O ~/antlr4-cpp-runtime-4.12.0-source.zip ${PROXY_URL}https://github.com/antlr/website-antlr4/blob/gh-pages/download/antlr4-cpp-runtime-4.12.0-source.zip
+	wget -O ~/antlr4-cpp-runtime-4.12.0-source.zip ${PROXY_URL}https://github.com/antlr/website-antlr4/raw/refs/heads/gh-pages/download/antlr4-cpp-runtime-4.12.0-source.zip
 	unzip ~/antlr4-cpp-runtime-4.12.0-source.zip -d ~/antlr4-cpp-runtime-4.12.0-source
 	cd ~/antlr4-cpp-runtime-4.12.0-source || exit 1
 	cmake -B build -S . -G Ninja -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_BUILD_TYPE=Debug -DANTLR_BUILD_CPP_TESTS=OFF
