@@ -15,6 +15,7 @@
 ///
 #pragma once
 
+#include <cstdint>
 #include <string>
 
 /// @brief 整数变字符串
