@@ -271,9 +271,8 @@ endif()
 # -Werror强制警告当作错误处理
 # -Wall尽可能多的让编译器提示警告和错误
 # __STDC_VERSION__的目的是警告产生的flex源文件出现INT8_MAX警告等
-# 24.04上Antlr4生成的代码编译出现-Werror=overloaded-virtual=，为避免这个错误暂时禁用-Werror
-# 后续更新antlr的版本后开启-Werror
-target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wno-write-strings -Wno-unused-function)
+# 24.04上Antlr4生成的代码用gcc编译出现-Werror=overloaded-virtual=，请用clang编译器
+target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Werror -Wno-write-strings -Wno-unused-function)
 
 if(USE_GRAPHVIZ)
 	target_compile_definitions(${PROJECT_NAME} PRIVATE USE_GRAPHVIZ)

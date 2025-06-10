@@ -24,7 +24,7 @@ apt-get update
 
 # 安装一系列的软件
 apt-get install -y zsh vim git wget curl python3 sudo
-apt-get install -y software-properties-common apt-utils build-essential gcc-12 g++-12 clang clangd clang-format clang-tidy bear llvm libomp-dev libtool cmake ninja-build graphviz graphviz-dev dos2unix
+apt-get install -y software-properties-common apt-utils build-essential clang clangd clang-format clang-tidy bear llvm libomp-dev libtool cmake ninja-build graphviz graphviz-dev dos2unix
 apt-get install -y flex bison
 apt-get install -y gdb lldb gdbserver gdb-multiarch
 apt-get install -y openjdk-17-jdk dotnet-sdk-6.0
