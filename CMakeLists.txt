@@ -23,8 +23,10 @@ if(MSVC)
 	add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 endif()
 
-# graphviz查找文件
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/CMake)
+if(USE_GRAPHVIZ)
+	# graphviz查找文件
+	list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/CMake)
+endif()
 
 # 查找线程库，避免terminate called after throwing an instance of 'std::system_error'
 find_package(Threads REQUIRED)
@@ -34,7 +36,9 @@ find_package(Java COMPONENTS Runtime REQUIRED)
 
 # 因AST输出图片需要借助Graphviz提供的C++接口来实现，因此若Graphviz没有安装则出错
 # 查找graphviz库是否在系统中安装，若安装则设置一系列的变量，如LIBGVC_INCLUDE_DIRS等
-find_package(Graphviz REQUIRED)
+if(USE_GRAPHVIZ)
+	find_package(Graphviz REQUIRED)
+endif()
 
 # 查找flex工具，找不到则出错，注意设置PATHS的路径；FLEX_EXECUTABLE记录flex程序的位置
 # 请优先使用find_package，不行用find_program，指定flex的位置
@@ -275,14 +279,14 @@ endif()
 target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Werror -Wno-write-strings -Wno-unused-function)
 
 if(USE_GRAPHVIZ)
+	# 指定graphviz的库文件以及位置，防止链接时找不到graphviz的库函数
 	target_compile_definitions(${PROJECT_NAME} PRIVATE USE_GRAPHVIZ)
 	target_include_directories(${PROJECT_NAME} PRIVATE ${Graphviz_INCLUDE_DIRS})
 
-	# 指定graphviz的库文件以及位置，防止链接时找不到graphviz的库函数
 	target_link_libraries(${PROJECT_NAME} PRIVATE ${Graphviz_LIBRARIES})
 endif()
 
-# 引入graphviz库的头文件，防止编译时找不到graphviz的头文件
+# 引入头文件位置，便于查找，在#include不用指定路径
 target_include_directories(${PROJECT_NAME} PRIVATE
 	${ANTLR4_INCLUDE_DIR}
 	utils
